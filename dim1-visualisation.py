@@ -2,11 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+# TODO: create an ui that is more user interactive
+# TODO: apply directly the given wave formula
+
 # Initialize physical and numerical constants
 
-a = 1.0  # set the length of the system
-dx = 0.1  # set the discrete spatial stepsize
-c = 1.0  # define the wave speed
+a = 20.0  # set the length of the system
+dx = 0.5  # set the discrete spatial stepsize
+c = 0.5  # define the wave speed
 
 dt = dx / c  # choose a time step to satisfy the CFL condition. Information can't
 # travel further than dx during a time dt or the system will be
@@ -18,8 +21,8 @@ nsteps = 100  # set the number of time steps
 
 f = np.zeros((npts, 3))
 
-xc = 0.5  # define the center of the system to locate a Gaussian pulse (see below)
-w = 0.05  # define the width of the Gaussian wave pulse
+xc = a / 2  # define the center of the system to locate a Gaussian pulse (see below)
+w = 1.0  # define the width of the Gaussian wave pulse
 
 # f[:,0] = np.exp(-(x-xc)**2/(w**2)) #use this initial condition for a Gaussian
 f[:, 0] = np.sin(2 * np.pi * x / a)  # use this initial condition for a standing wave
@@ -30,8 +33,8 @@ f[1:-1, 1] = f[1:-1, 0] + .5 * c ** 2 * (f[:-2, 0] + f[2:, 0] - 2. * f[1:-1, 0])
 # ----- setting up the plot -----
 fig, ax = plt.subplots()
 line, = ax.plot(x, f[:, 0], 'b')  # Line to update in the animation
-ax.set_xlim(0, 1)
-ax.set_ylim(-1.5, 1.5)
+# ax.set_xlim(0, a)
+# ax.set_ylim(-1.5, 1.5)
 ax.set_title('Wave Propagation')
 ax.set_xlabel('x')
 ax.set_ylabel('Amplitude')
