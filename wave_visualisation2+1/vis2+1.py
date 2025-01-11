@@ -7,6 +7,12 @@ A = 1.0  # amplitude
 (kx, ky) = (2 * np.pi / 10, 2 * np.pi / 10)  # wave vectors
 omega = 2 * np.pi / 5  # angular frequency
 
+L = 30.0 # length of the system
+dx = 0.5 # spatial step size
+c = 1 # wave speed (recommended to be 1)
+(x_start, y_start) = (L / 2, L / 2)
+w = 3.0 # width of the gaussian wave pulse
+
 # ====== creating the grid ======
 x = np.linspace(0, 10, 200)
 y = np.linspace(0, 10, 200)
@@ -14,7 +20,7 @@ y = np.linspace(0, 10, 200)
 
 # ====== initialising the grid ======
 figure = plt.figure(figsize=(8, 8))
-ax = figure.add_subplot(111, projection='3d')
+ax = figure.add_subplot( projection='3d')
 ax.set_title("2D wave evolution")
 ax.set_xlabel("x")
 ax.set_ylabel("y")
