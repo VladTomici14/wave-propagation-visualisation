@@ -1,6 +1,11 @@
 # 2+1 wave plotting
-For the first part of the code, we shall do the installments of all of the libraries that we will use. 
 
+## Quick links
+**_TUTUORIAL_**: [HOW TO RUN THE 2+1 WAVE VISUALISATION PROJECT]()
+
+**_TO TEST THE CODE, ACCESS THIS_**: [GOOGLE COLAB CODE](https://colab.research.google.com/drive/1QVAfFcDTj8onUciqTtq9gnGhLE3H-X_j?usp=sharing)
+
+# Documentation
 
 ## Table of Contents
 - [1) Introduction](#1-introduction)
