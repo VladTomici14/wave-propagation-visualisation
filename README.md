@@ -1,45 +1,62 @@
 # 2+1 wave plotting
 
 ## Quick links
-**_TUTUORIAL_**: [HOW TO RUN THE 2+1 WAVE VISUALISATION PROJECT]()
+**_TUTUORIAL_** (youtube unlisted link): [HOW TO RUN THE 2+1 WAVE VISUALISATION PROJECT](https://youtu.be/PGadxW2j_VQ)
 
 **_TO TEST THE CODE, ACCESS THIS_**: [GOOGLE COLAB CODE](https://colab.research.google.com/drive/1QVAfFcDTj8onUciqTtq9gnGhLE3H-X_j?usp=sharing)
 
 # Documentation
 
-## Table of Contents
+## _Table of Contents_
 - [1) Introduction](#1-introduction)
   - [Why Google Colab?](#why-google-colab)
-  - [Project overview](#project-overview) 
   - [Objectives and purpose](#objectives-and-purpose) 
-- [2) In-depth view analysis](#2-in-depth-view-analysis)
-  - [Waveforms explanation](#waveforms-explanation)
+- [2) In-depth analysis](#2-in-depth-analysis)
+  - [The wave equation](#the-wave-equation)
   - [Mathematical basis](#mathematical-basis)
 - [3) Implementation](#3-implementation)
-  - [Tools and libraries used](#tools-and-libraries-used)
-  - [Code explanation](#code-explanation)
-- [4) How to use the project](#4-how-to-use-the-project)
+  - [Code explanations](#code-explanations)
+- [4) Plots examples](#4-plots-examples)
 - [5) Future improvements](#5-future-improvements)
 - [6) Conclusion](#6-conclusion)
 
 ## 1) Introduction
-The project is written in Python. But it’s running in a Google Colab.
+This project models and visualizes the propagation of a wave in flat spacetime with zero shift. The implementation uses the fourth-order Runge-Kutta (RK4) method to solve the governing equations numerically.
 
-### Why Google Colab?
+### _Why Google Colab?_
 Google Colab (short for Colaboratory) is a cloud-based platform provided by Google that allows users to write, execute, and share Python code in a web-based environment. It is particularly well-suited for tasks involving data analysis, machine learning, and scientific computing, as it provides free access to computational resources such as GPUs and TPUs.
 
 Google Colab eliminates the need for extensive local setup by enabling code execution directly in the cloud. This means that users do not need to install Python or additional libraries on their local machines, as all dependencies can be specified and installed within the Colab notebook. Furthermore, Colab notebooks are easily shareable via links, making collaboration and distribution of code straightforward.
 
 In the context of this project, I chose Google Colab because it ensures that my wave plotting code can be accessed and run seamlessly anywhere, anytime by anyone, without requiring any configuration of the project on local machines. By hosting the code on Colab, I can provide a ready-to-run environment where the project can be executed interactively, enhancing both accessibility and user experience.
 
-### Project overview
+### _Objectives and purpose_
+The purpose of this project is to simply visualise some waves in the 2+1 dimension (2 for space, 1 for time). 
 
-### Objectives and purpose
+Some of my personal objectives of this project are: 
+- the code to be easily readable 
+- the changes in the code to be done quickly 
+- to be portable and accessible for anyone, on any device
+- to learn new things
+
+## 2) In-depth analysis
+
+In this project, we study the evolution of a scalar wave in a 2D spatial domain with time, governed by the wave equation in flat spacetime: <br>
+$\frac{\partial^2\phi}{\partial t^2}=c^2 \nabla^2 \phi$ <br>
+
+where: 
+- $\phi(x, y, t)$ is the wave amplitude, where $(x, y)$ are space coordinates and $t$ is the time coordinate
+- $c$ is the speed of wave propagation
+- $\nabla^2$ is the Laplacian operator in 2 spacial dimensions
+
+We use the fourth-order *Runge-Kutta method (RK4)* to integrate the equation in time, ensuring numerical stability and high accuracy. The solution is visualised as a time-dependent 3D plot. 
 
 
-## 2) In-depth view analysis
+### _The wave equation_
+The wave equation in flat spacetime is derived from the conservation of energy and momentum. In 2+1 dimensions (two spatial dimensions, one temporal), it takes the form: <br>
 
-### Waveforms explanation
+$\frac{\partial^2\phi}{\partial t^2}=c^2(\frac{\partial^2\phi}{\partial x^2}+\frac{\partial^2\phi}{\partial y^2})$ <br>
+
 
 The fundamental wave equation for 2+1 dimension is: 
 $\phi \square=0$
@@ -48,14 +65,6 @@ $\square = -\frac{\partial^2}{\partial t^2} + \nabla ^ 2$
 
 where $\nabla$ is the 
 
-$\frac{\partial^2\phi}{\partial t^2}=c^2(\frac{\partial^2\phi}{\partial x^2}+\frac{\partial^2\phi}{\partial y^2})$
-
-where: 
-- $\phi(x, y, t)$ is the wave amplitude
-- $c$ is the wave speed
-- $x$ and $y$ are the space coordinates 
-- $t$ is the time coordinates
-- $\square$ is the d'Alembertian operator
 
 Which can also be written as: 
 
@@ -63,13 +72,7 @@ Where $\square$ is also known as d'Alambert operator and is equal to: <br>
 $\square = -\frac{1}{c^2}  \frac{\partial^2}{\partial t^2} + \frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}$
 
 
-### Mathematical basis
-
-
-## 3) Implementation
-
-### Tools and libraries used
-
+### _Mathematical basis_
 The wave amplitude $\phi(x, y, t)$ is stored in a 3D array, known in the code as ```phi```: 
 - $\phi[:, :, 0]:t - \triangle t$ is the previous timestep 
 - $\phi[:, :, 0]:t$ is the current timestep
@@ -79,8 +82,7 @@ The Laplacian is calculated using central finite differences.
 
 The wave starts as a Gaussian Pulse centred in ```(x_start, y_start)``` with a specified width. 
 
-### Runge-Kutta for time integration
-
+### _Runge-Kutta for time integration_
 For time integration, we can switch to Runge-Kutta (RK4) for time evolution. It means replacing the finite difference time integration with the RK4 scheme: 
 
 1. We compute:
@@ -90,30 +92,29 @@ For time integration, we can switch to Runge-Kutta (RK4) for time evolution. It 
    - $k_4=S(t^n + \triangle t, \phi^n + \triangle t k_3)$
 2. We update $\phi^{n+1} = \phi^n + \frac{\triangle t}{6}(k_1 + 2k_2 + 2k_3 + k_4)$
 
-### Code explanation
-This section provides a detailed breakdown of the code used in the project. 
+## 3) Implementation
 
-#### 0) Installing all of the required libraries
+In the beginning, we will set a Gaussian Pulse centered in ```(x_start, y_start)```. <br>
 
-#### 1) Importing required libraries 
-The first step is to import the necessary libraries for this project. These libraries provide tools for numerical computation and visualization. 
+$\phi(x, y, t = 0) = exp(-\frac{(x-x_{start})^2+(y-y_{start})^2}{})$ <br> 
 
-```python 
+The initial velocity is simply set to zero: $\psi(x, y, t = 0) =0$
 
-```
-
+### _Code explanations_
+For the libraries, we have used 2 big libraries for data processing: 
 - **NumPy** - used for efficient numerical operations such as generating arrays and performing mathematical functions 
 - **Matplotlib** - used for creating static, animated and interactive plots
 
-#### 2) Defining the parameters
-The parameters of the wave are defined to allow customization and flexibility.
+## 4) Plots examples
 
-### Plots examples
-
-
-## 4) How to use the project
+![plot1](images/image1.png)
+![plot2](images/image2.png)
+![plot3](images/image3.png)
+![plot4](images/image4.png)
 
 ## 5) Future improvements
+- Higher dimensions - extending the model to 3+1 dimensions for more realistic physics
+- Optimisation - for using GPU computing for larger grids and faster computations
 
 ## 6) Conclusion
 
