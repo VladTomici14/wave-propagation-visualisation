@@ -58,20 +58,6 @@ The wave equation in flat spacetime is derived from the conservation of energy a
 $\frac{\partial^2\phi}{\partial t^2}=c^2(\frac{\partial^2\phi}{\partial x^2}+\frac{\partial^2\phi}{\partial y^2})$ <br>
 
 
-The fundamental wave equation for 2+1 dimension is: 
-$\phi \square=0$
-
-$\square = -\frac{\partial^2}{\partial t^2} + \nabla ^ 2$
-
-where $\nabla$ is the 
-
-
-Which can also be written as: 
-
-Where $\square$ is also known as d'Alambert operator and is equal to: <br>
-$\square = -\frac{1}{c^2}  \frac{\partial^2}{\partial t^2} + \frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}$
-
-
 ### _Mathematical basis_
 The wave amplitude $\phi(x, y, t)$ is stored in a 3D array, known in the code as ```phi```: 
 - $\phi[:, :, 0]:t - \triangle t$ is the previous timestep 
@@ -94,9 +80,7 @@ For time integration, we can switch to Runge-Kutta (RK4) for time evolution. It 
 
 ## 3) Implementation
 
-In the beginning, we will set a Gaussian Pulse centered in ```(x_start, y_start)```. <br>
-
-$\phi(x, y, t = 0) = exp(-\frac{(x-x_{start})^2+(y-y_{start})^2}{})$ <br> 
+In the beginning, we will set a Gaussian Pulse centered in ```(x_start, y_start)```: $\phi(x, y, t = 0) = exp(-\frac{(x-x_{start})^2+(y-y_{start})^2}{})$ <br> 
 
 The initial velocity is simply set to zero: $\psi(x, y, t = 0) =0$
 
@@ -106,7 +90,7 @@ For the libraries, we have used 2 big libraries for data processing:
 - **Matplotlib** - used for creating static, animated and interactive plots
 
 ## 4) Plots examples
-
+Here are some plots snapshots: 
 ![plot1](images/image1.png)
 ![plot2](images/image2.png)
 ![plot3](images/image3.png)
@@ -117,5 +101,4 @@ For the libraries, we have used 2 big libraries for data processing:
 - Optimisation - for using GPU computing for larger grids and faster computations
 
 ## 6) Conclusion
-
-
+By combining the finite difference method for spatial discretization with the Runge-Kutta 4th-order method for time integration, the implementation achieves accurate and stable results. The visualised Gaussian wave demonstrates symmetric propagation, validating the numerical approach. This work provides a solid foundation for exploring more complex wave dynamics and can be extended to higher dimensions or advanced boundary conditions in the future studies.
