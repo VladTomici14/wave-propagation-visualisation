@@ -80,7 +80,9 @@ For time integration, we can switch to Runge-Kutta (RK4) for time evolution. It 
 
 ## 3) Implementation
 
-In the beginning, we will set a Gaussian Pulse centered in ```(x_start, y_start)```: $\phi(x, y, t = 0) = exp(-\frac{(x-x_{start})^2+(y-y_{start})^2}{})$ <br> 
+In the beginning, we will set a Gaussian Pulse centered in ```(x_start, y_start)```: $\phi(x, y, t = 0) = exp(-\frac{(x-x_{start})^2+(y-y_{start})^2}{\sigma^2})$ <br> 
+<br>
+where $\sigma$ is the Gaussian wave width.
 
 The initial velocity is simply set to zero: $\psi(x, y, t = 0) =0$
 

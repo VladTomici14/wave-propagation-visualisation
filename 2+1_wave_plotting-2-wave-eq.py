@@ -11,7 +11,7 @@ dx = 0.3              # (discrete spatial stepsize for x-axis)
 dy = dx               # (discrete spatial stepsize for y-axis)
 c = 1.0               # (wave speed)
 dt = 0.5 * dx / c     # (time stepsize)
-sigma = 1.5           # (with of the pulse)
+sigma = 1.5           # (width of the pulse)
 nsteps = 200          # (number of steps / frames for plotting)
 
 (x_start, y_start) = (L / 2, L / 2)      # (center of the system, the point where the pulse will be applied)
