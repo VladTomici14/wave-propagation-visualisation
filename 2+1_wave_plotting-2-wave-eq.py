@@ -1,10 +1,9 @@
-# doing all of the necessary imports
+# ----- doing all the necessary imports -----
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib import rc
 import numpy as np
-
 
 # ----- initialising the wave parameters -----
 L = 30.0              # (system length)
@@ -12,15 +11,10 @@ dx = 0.3              # (discrete spatial stepsize for x-axis)
 dy = dx               # (discrete spatial stepsize for y-axis)
 c = 1.0               # (wave speed)
 dt = 0.5 * dx / c     # (time stepsize)
-sigma = 0.75           # (with of the pulse)
+sigma = 1.5           # (with of the pulse)
 nsteps = 200          # (number of steps / frames for plotting)
 
 (x_start, y_start) = (L / 2, L / 2)      # (center of the system, the point where the pulse will be applied)
-
-# ----- style parameters for plotting -----
-WIREFRAME_LINE_WIDTH = 0.2
-WIREFRAME_COLOR = (0, 0, 0)
-
 
 # ----- defining the arrays that store positions -----
 x = np.arange(0, L, dx)
@@ -28,61 +22,74 @@ y = np.arange(0, L, dy)
 xx, yy = np.meshgrid(x, y)
 
 # ----- wave initialisation -----
-phi = np.zeros((len(x), len(y), 3))  # (storage for t-1, t, and t+1)
+phi = np.zeros((len(x), len(y)))     # (wave amplitude)
+psi = np.zeros((len(x), len(y)))     # (velocity, time derivative of phi)
+npts = len(x)                        # (number of spatial points)
 
-npts = len(x)  # (number of spatial points)
+# ----- adding the gaussian pulse -----
+phi = np.exp(-((xx - x_start)**2 + (yy - y_start)**2) / (2 * sigma**2))
 
+# ----- defining the Laplacian function -----
+def laplacian(f):
+    laplacian_f = np.zeros_like(f)
+    laplacian_f[1:-1, 1:-1] = (
+        (f[:-2, 1:-1] + f[2:, 1:-1] - 2 * f[1:-1, 1:-1]) / dx**2 +
+        (f[1:-1, :-2] + f[1:-1, 2:] - 2 * f[1:-1, 1:-1]) / dy**2
+    )
 
-# ----- doing the first step in the algorithm -----
-phi[:, :, 1] = np.exp(-((xx - x_start)**2 + (yy - y_start)**2) / (2 * sigma**2))
+    return laplacian_f
 
+# ----- RK4 function for updating phi and psi -----
+def rk4_step(phi, psi, dt):
+    # ----- helper to compute d(phi)/dt and d(psi)/dt -----
+    def rhs(phi, psi):
+        dphi_dt = psi
+        dpsi_dt = c**2 * laplacian(phi)
 
-# ----- setting up the plot -----
-rc('animation', html='jshtml')
-figure = plt.figure()
-ax = figure.add_subplot(projection="3d")
-plot_elements = [None]
-ax.set_zlim(-0.25, 1)
+        return dphi_dt, dpsi_dt
 
+    # ----- RK4 stages -----
+    k1_phi, k1_psi = rhs(phi, psi)
+    k2_phi, k2_psi = rhs(phi + 0.5 * dt * k1_phi, psi + 0.5 * dt * k1_psi)
+    k3_phi, k3_psi = rhs(phi + 0.5 * dt * k2_phi, psi + 0.5 * dt * k2_psi)
+    k4_phi, k4_psi = rhs(phi + dt * k3_phi, psi + dt * k3_psi)
+
+    # ----- updating phi and psi -----
+    phi_next = phi + (dt / 6) * (k1_phi + 2 * k2_phi + 2 * k3_phi + k4_phi)
+    psi_next = psi + (dt / 6) * (k1_psi + 2 * k2_psi + 2 * k3_psi + k4_psi)
+
+    return phi_next, psi_next
+
+# ----- initialising the plot -----
+fig = plt.figure()
+ax = fig.add_subplot(111, projection="3d")
+ax.set_zlim(-1, 2)
 ax.set_title("2+1 wave propagation")
 ax.set_xlabel("x")
 ax.set_ylabel("y")
+ax.set_zlabel("Amplitude")
 
+# ----- doing the first step in plotting -----
+plot = ax.plot_surface(xx, yy, phi, cmap="viridis", edgecolor="none")
 
-
-# ----- update function for animation generation -----
+# ----- function to update plot animation -----
 def update(frame):
-    global phi
+    global phi, psi
 
-    # Compute Laplacian (central differences)
-    laplacian = (
-        (phi[:-2, 1:-1, 1] + phi[2:, 1:-1, 1] - 2 * phi[1:-1, 1:-1, 1]) / dx**2 +
-        (phi[1:-1, :-2, 1] + phi[1:-1, 2:, 1] - 2 * phi[1:-1, 1:-1, 1]) / dy**2
-    )
+    # ----- updating phi and psi using RK4 -----
+    phi, psi = rk4_step(phi, psi, dt)
 
-    # Update the wave using finite differences
-    phi[1:-1, 1:-1, 2] = (
-        2 * phi[1:-1, 1:-1, 1] - phi[1:-1, 1:-1, 0] + c**2 * dt**2 * laplacian
-    )
+    # ----- clearing and redrawing the plot -----
+    ax.collections.clear()
+    ax.plot_surface(xx, yy, phi, cmap="viridis", edgecolor="none")
 
-    # Update time slices
-    phi[:, :, 0] = phi[:, :, 1]
-    phi[:, :, 1] = phi[:, :, 2]
-
-    # Update the plot
-    ax.clear()
-    ax.set_zlim(-0.25, 5)
-    ax.set_title(f"2+1 wave propagation, Time = {frame * dt:.2f}")
-    ax.set_xlabel("x")
-    ax.set_ylabel("y")
-    plot_elements[0] = ax.plot_surface(xx, yy, phi[:, :, 2], cmap="viridis")
-
+    ax.set_title(f"t = {frame * dt:.2f}")
     print(f"Processing frame {frame}")
 
-    return plot_elements
-
+    return ax,
 
 # ----- generating the animation -----
-animation = FuncAnimation(figure, update, frames=nsteps, interval=50)
+ani = FuncAnimation(fig, update, frames=nsteps, interval=50, blit=False)
 
+# ----- preview of the plot animation -----
 plt.show()
